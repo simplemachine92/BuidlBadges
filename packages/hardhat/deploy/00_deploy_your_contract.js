@@ -16,17 +16,35 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     GTC = await deploy("GTC", {
       from: deployer,
       //front-end address vvvvvvvvvvvvvvv replace with args: [admins[0]], for deploy
-      args: ["0x43aa5A6a8CB1Fec575583b7531b57bd79067309E"], 
+      args: ["0xb010ca9Be09C382A9f31b79493bb232bCC319f01"], 
       log: true,
     });
   }
 
+  const GTC2 = await ethers.getContract("GTC");
+
+  NFT = await deploy("SimpleNFT", {
+    from: deployer,
+    args: ['bobsson', '0xb010ca9Be09C382A9f31b79493bb232bCC319f01', '200'],
+    log: true,
+    });
+
+    const SimpleNFT = await ethers.getContract("SimpleNFT");
+
   // deploy Staking Contract ~ any network
+  if (chainId !== "1") {
   await deploy("StakingGTC", {
     from: deployer,
-    args: ["0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F"],
+    args: [GTC2.address, SimpleNFT.address],
     log: true,
   });
+} else {
+  await deploy("StakingGTC", {
+    from: deployer,
+    args: ['0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F'],
+    log: true,
+  });
+}
 
   // Getting a previously deployed contract
   const StakeGTCContract = await ethers.getContract("StakingGTC", deployer);
