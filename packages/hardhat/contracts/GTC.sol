@@ -5,10 +5,10 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract GTC is ERC20 {
     constructor(address admin) ERC20("GTC", "GTC") {
-        _mint(admin, 1000 ether);
+        _mint(admin, 1000 * 10 ** 18);
     }
 
     function faucetMint() public {
-        _mint(msg.sender, 1000 ether);
+        _mint(msg.sender, 1000 * 10 ** 18);
     }
 }

@@ -18,9 +18,9 @@ contract SimpleNFT is ERC721URIStorage, Ownable {
 		string public userTokenURI;
 		string public setUserTokenURI;
 
-    constructor(string memory _userTokenURI, address recipient, uint256 amount) ERC721("MINTLER", "MINTR") {
+    constructor(string memory _userTokenURI, address to, uint256 amount) ERC721("MINTLER", "MINTR") {
 			userTokenURI = _userTokenURI;
-            mint(recipient, amount);
+            mint(to, amount);
     }
 
     function mint(address recipient, uint256 amount) public returns (uint256) {

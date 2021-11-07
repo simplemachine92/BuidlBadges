@@ -8,13 +8,14 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./GTC.sol";
 
 
 /// @title A title that should describe the contract/interface
 /// @author jaxcoder && nowonder
-/// @notice Creates Pools for Staking GTC against anything
+/// @notice Creates Donation Pools to buy-back NFTs, and issues governance tokens for the NFT treasury.
 /// @dev Explain to a developer any extra details
 contract StakingGTC is Ownable, ReentrancyGuard {
   using SafeMath for uint256;
@@ -23,6 +24,8 @@ contract StakingGTC is Ownable, ReentrancyGuard {
 
   uint256 public time;
   uint256 public deadline;
+  //IERC721Enumerable address token;
+  
 
     // vars
     Counters.Counter private _poolIds;
@@ -38,12 +41,13 @@ contract StakingGTC is Ownable, ReentrancyGuard {
     uint256 balance;
     uint256 time;
     uint256 deadline;
-    address nft;
+    uint floor;
   }
 
   // mappings
   mapping(uint256 => PoolInfo) public poolInfo;
   mapping(address => mapping(uint256 => PoolInfo)) public balanceInfo;
+  //mapping(address => mapping(uint => PoolInfo)) public floorInfo;
   mapping(address => uint) public floor;
   //mapping(address => uint256) public userDonation;
 
@@ -62,17 +66,12 @@ contract StakingGTC is Ownable, ReentrancyGuard {
 
   GTC gtc;
 
-  // get pool balance
-  function poolBalance(uint256 poolId) public view returns(uint256) {
-    PoolInfo storage pool = poolInfo[poolId];
-    return pool.balance;
-  }
-
   // create pool
   function createPool(address asset, address _nft, uint256 amount) public {
-    require(block.timestamp < deadline, "Donating has ended");
-    
-    
+
+    //IERC721Enumerable(_nft);
+    //uint nftSupply = _nft.totalSupply();
+
     _poolIds.increment();
     uint256 id = _poolIds.current();
 
@@ -80,15 +79,11 @@ contract StakingGTC is Ownable, ReentrancyGuard {
     pool.asset = asset;
     pool.balance = amount;
     pool.poolid = id;
-    pool.nft = _nft;
-
-    balanceInfo[msg.sender][id].balance = balanceInfo[msg.sender][id].balance.add(amount);
+    //pool.nft = _nft;
+    //pool.floor = amount / nftSupply;
 
     emit PoolCreated(id, asset, _nft, amount, block.timestamp);
 
-      if (block.timestamp > deadline) {
-        
-      }
   }
 
   function executeSale(
@@ -115,6 +110,7 @@ contract StakingGTC is Ownable, ReentrancyGuard {
 
   // donate/stake
   function stake(uint256 amount, uint256 poolId) public {
+    require(block.timestamp < deadline, "Donating closed");
     require(gtc.balanceOf(msg.sender) >= amount, "Not enough balance");
 
   (bool success) = gtc.transferFrom(msg.sender, address(this), amount);
@@ -122,6 +118,7 @@ contract StakingGTC is Ownable, ReentrancyGuard {
 
     PoolInfo storage pool = poolInfo[poolId];
     pool.balance = pool.balance.add(amount);
+    balanceInfo[msg.sender][poolId].balance = balanceInfo[msg.sender][poolId].balance.add(amount);
 
     emit Stake(msg.sender, amount, block.timestamp);
   }
@@ -140,5 +137,15 @@ contract StakingGTC is Ownable, ReentrancyGuard {
     emit Unstake(msg.sender, balance, block.timestamp);
   }
 
+  //get pool nft floor
+  function poolFloor(uint256 poolId) public view returns(uint256) {
+    
+  }
+
+  // get pool balance
+  function poolBalance(uint256 poolId) public view returns(uint256) {
+    PoolInfo storage pool = poolInfo[poolId];
+    return pool.balance;
+  }
   
 }

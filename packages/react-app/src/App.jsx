@@ -12,6 +12,7 @@ import {
   Address,
   AddressInput,
   Balance,
+  TokenBalance,
   Contract,
   Faucet,
   GasGauge,
@@ -32,7 +33,7 @@ import {
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 // import Hints from "./Hints";
-import { ExampleUI, Hints, Subgraph, Home } from "./views";
+import { ExampleUI, Hints, Subgraph, } from "./views";
 
 import { useContractConfig } from "./hooks";
 import Portis from "@portis/web3";
@@ -269,7 +270,6 @@ function App(props) {
   const tokensPerEth = useContractReader(readContracts, "Vendor", "tokensPerEth");
   console.log("🏦 tokensPerEth:", tokensPerEth ? tokensPerEth.toString() : "...");
 
-  
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -460,11 +460,13 @@ function App(props) {
   const sellTokensEvents = useEventListener(readContracts, "Vendor", "SellTokens", localProvider, 1);
   console.log("📟 buyTokensEvents:", buyTokensEvents);
 
-  const [tokenBuyAmount, setTokenBuyAmount] = useState();
+  const [donationAmount, setDonationAmount] = useState();
+  const [floorPrice, setFloorPrice] = useState();
+  const [nftAddress, setNFTAddress] = useState();
 
-  const ethCostToPurchaseTokens =
+  /* const ethCostToPurchaseTokens =
     tokenBuyAmount && tokensPerEth && ethers.utils.parseEther("" + tokenBuyAmount / parseFloat(tokensPerEth));
-  console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens);
+  console.log("ethCostToPurchaseTokens:", ethCostToPurchaseTokens); */
 
   const [tokenSendToAddress, setTokenSendToAddress] = useState();
   const [tokenSendAmount, setTokenSendAmount] = useState();
@@ -525,7 +527,7 @@ function App(props) {
               }}
               to="/"
             >
-              YourToken
+              RAISE THA FLOOR
             </Link>
           </Menu.Item>
           <Menu.Item key="/contracts">
@@ -538,76 +540,103 @@ function App(props) {
               Debug Contracts
             </Link>
           </Menu.Item>
-          <Menu.Item key="/home">
-            <Link
-              onClick={() => {
-                setRoute("/home");
-              }}
-              to="/home"
-            >
-              Home
-            </Link>
-          </Menu.Item>
         </Menu>
 
         <Switch>
           <Route exact path="/">
+            <TokenBalance balance={yourTokenBalance}/>
             <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
-              <Card title="Your Tokens" extra={<a href="#">code</a>}>
-                <div style={{ padding: 8 }}>
-                  <Balance balance={yourTokenBalance} fontSize={64} />
-                </div>
-              </Card>
-            </div>
-            {transferDisplay}
-            <Divider />
-            <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
-              <Card title="Tokens (Approve first)" extra={<a href="#">code</a>}>
-                <div style={{ padding: 8 }}>{tokensPerEth && tokensPerEth.toNumber()} tokens per ETH</div>
+              <Card title="🐳 RAISE THA FLOOR!!!! 🐳">
+                <div style={{ padding: 8 }}>{tokensPerEth && tokensPerEth.toNumber()} Find the Floor</div>
+               
+                <Card
+        style={{ width: 200 }}
+        title={
+          <div>
+            Moonshot Bots
+            <a
+              style={{ cursor: "pointer", opacity: 0.33 }}
+             // href={loadedAssets[a].external_url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              
+            </a>
+          </div>
+        }
+      >
+        {/* <img style={{ maxWidth: 130 }} src={loadedAssets[a].image} alt="" />
+        <div style={{ opacity: 0.77 }}>{loadedAssets[a].description}</div> */}
+      </Card>
 
-                <div style={{ padding: 8 }}>
-                  <Input
-                    style={{ textAlign: "center" }}
-                    placeholder={"amount of tokens to buy"}
-                    value={tokenBuyAmount}
-                    onChange={e => {
-                      setTokenBuyAmount(e.target.value);
-                    }}
-                  />
-                  <Balance balance={ethCostToPurchaseTokens} dollarMultiplier={price} />
-                </div>
-
-                <div style={{ padding: 8 }}>
-                  <Button
-                    type={"primary"}
-                    loading={buying}
-                    onClick={async () => {
-                      setBuying(true);
-                      await tx(writeContracts.Vendor.buyTokens({ value: ethCostToPurchaseTokens }));
-                      setBuying(false);
-                    }}
-                  >
-                    Buy Tokens
-                  </Button>
-                </div>
-                <div style={{ padding: 8 }}>
                 <Button
                     type={"primary"}
                     loading={buying}
                     onClick={async () => {
-                      setBuying(true);
-                      await tx(writeContracts.GTC.approve(StakingGTC, ethers.utils.parseEther(tokenBuyAmount)));
-                      setBuying(false);
+                      const openAI = fetch(`https://api.opensea.io/api/v1/collection/${nftAddress}/stats`, {
+                      method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                      })
+                      .then(response => response.json())
+                      .then(data => console.log(data));
                     }}
                   >
-                    Approve
+                    Get NFT Floor
                   </Button>
+
+                <div style={{ padding: 8 }}>
+                <Input
+                    style={{ textAlign: "center" }}
+                    placeholder={"Approve Amount"}
+                    value={donationAmount}
+                    onChange={e => {
+                      setDonationAmount(e.target.value);
+                    }}
+                  />
+                  
+                  <Input
+                    style={{ textAlign: "center" }}
+                    placeholder={"Donation Amount"}
+                    value={floorPrice}
+                    onChange={e => {
+                      setFloorPrice(e.target.value);
+                    }}
+                  />
+                </div>
+
+                <div style={{ padding: 8 }}>
                   <Button
                     type={"primary"}
                     loading={buying}
                     onClick={async () => {
                       setBuying(true);
-                      await tx(writeContracts.Vendor.sellTokens(ethers.utils.parseEther(tokenBuyAmount)));
+                      await tx(writeContracts.GTC.approve(poolAddress, ethers.utils.parseEther(donationAmount)));
+                      setBuying(false);
+                    }}
+                  >
+                    Approve GTC
+                  </Button>
+                </div>
+
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"primary"}
+                    loading={buying}
+                    onClick={async () => {
+                      setBuying(true);
+                      await tx(writeContracts.StakingGTC.stake(ethers.utils.parseEther(floorPrice), '1'));
+                      setBuying(false);
+                    }}
+                  >
+                    Donate Tokens
+                  </Button>
+                </div>
+                <div style={{ padding: 8 }}>
+                  <Button
+                    type={"primary"}
+                    loading={buying}
+                    onClick={async () => {
+                      setBuying(true);
+                      await tx(writeContracts.Vendor.sellTokens(ethers.utils.parseEther()));
                       setBuying(false);
                     }}
                   >
@@ -619,12 +648,12 @@ function App(props) {
 
             <div style={{ padding: 8, marginTop: 32 }}>
               <div>Vendor Token Balance:</div>
-              <Balance balance={poolTokenBalance} fontSize={64} />
+              <TokenBalance balance={poolTokenBalance} fontSize={64} />
             </div>
 
             <div style={{ padding: 8 }}>
               <div>Vendor ETH Balance:</div>
-              <Balance balance={vendorETHBalance} fontSize={64} /> ETH
+              <TokenBalance balance={vendorETHBalance} fontSize={64} /> ETH
             </div>
 
             <div style={{ width: 500, margin: "auto", marginTop: 64 }}>
@@ -706,9 +735,6 @@ function App(props) {
               blockExplorer={blockExplorer}
               contractConfig={contractConfig}
             />
-          </Route>
-          <Route path="/home">
-            <Home/>
           </Route>
         </Switch>
       </BrowserRouter>
