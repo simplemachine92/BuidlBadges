@@ -2,13 +2,17 @@ pragma solidity 0.8.4;
 // SPDX-License-Identifier: MIT
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
-interface IMerkler {
-    // Returns the address of the token distributed by this contract.
-    function token() external view returns (address);
-    // Returns the merkle root of the merkle tree containing account balances available to claim.
-    function merkleRoot() external view returns (bytes32);
+interface IGTCPool is Initializable, ReentrancyGuard {
+    // get pool balance
+    function poolBalance(uint256 poolId) public returns(uint256) {
+
+    // Creates Pool
+    function createPool(address asset, uint256 amount) internal {
+
     // Returns true if the index has been marked claimed.
     function isClaimed(uint256 index) external view returns (bool);
     // Claim the given amount of the token to the given address. Reverts if the inputs are invalid.

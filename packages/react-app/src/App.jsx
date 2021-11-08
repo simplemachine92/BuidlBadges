@@ -548,37 +548,29 @@ function App(props) {
             <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
               <Card title="🐳 RAISE THA FLOOR!!!! 🐳">
                 <div style={{ padding: 8 }}>{tokensPerEth && tokensPerEth.toNumber()} Find the Floor</div>
-               
-                <Card
-        style={{ width: 200 }}
-        title={
-          <div>
-            Moonshot Bots
-            <a
-              style={{ cursor: "pointer", opacity: 0.33 }}
-             // href={loadedAssets[a].external_url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              
-            </a>
-          </div>
-        }
-      >
-        {/* <img style={{ maxWidth: 130 }} src={loadedAssets[a].image} alt="" />
-        <div style={{ opacity: 0.77 }}>{loadedAssets[a].description}</div> */}
-      </Card>
+
+                <Input
+                    style={{ textAlign: "center" }}
+                    placeholder={"Contract Address"}
+                    value={nftAddress}
+                    onChange={e => {
+                      setNFTAddress(e.target.value);
+                    }}
+                  />
 
                 <Button
                     type={"primary"}
                     loading={buying}
                     onClick={async () => {
-                      const openAI = fetch(`https://api.opensea.io/api/v1/collection/${nftAddress}/stats`, {
-                      method: 'GET', // *GET, POST, PUT, DELETE, etc.
-                      })
+                      const result = await fetch(
+                        `https://api.covalenthq.com/v1/1/tokens/${nftAddress}/token_holders/?page-size=2000&key=ckey_2c198a798bdc4553b499279fe87`,
+                      )
                       .then(response => response.json())
-                      .then(data => console.log(data));
-                    }}
+                      .then(data => 
+                        
+                        console.log(data.data.items[0].total_supply)
+                        
+                    );}}
                   >
                     Get NFT Floor
                   </Button>
