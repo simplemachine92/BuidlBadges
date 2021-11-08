@@ -256,7 +256,7 @@ function App(props) {
     "0x34aA3F359A9D614239015126635CE7732c18fDF3",
   ]);
 
-  const poolAddress = readContracts && readContracts.StakingGTC && readContracts.StakingGTC.address;
+  const poolAddress = readContracts && readContracts.NewFloorPools && readContracts.NewFloorPools.address;
 
   const vendorETHBalance = useBalance(localProvider, poolAddress);
   if (DEBUG) console.log("💵 vendorETHBalance", vendorETHBalance ? ethers.utils.formatEther(vendorETHBalance) : "...");
@@ -547,7 +547,7 @@ function App(props) {
             <TokenBalance balance={yourTokenBalance}/>
             <div style={{ padding: 8, marginTop: 32, width: 300, margin: "auto" }}>
               <Card title="🐳 RAISE THA FLOOR!!!! 🐳">
-                <div style={{ padding: 8 }}>{tokensPerEth && tokensPerEth.toNumber()} Find the Floor</div>
+                <div style={{ padding: 8 }}>{tokensPerEth && tokensPerEth.toNumber()} NOTHING HERE WORKS YET, ITS 5AM AND I LOST VIGILENCE</div>
 
                 <Input
                     style={{ textAlign: "center" }}
@@ -615,7 +615,7 @@ function App(props) {
                     loading={buying}
                     onClick={async () => {
                       setBuying(true);
-                      await tx(writeContracts.StakingGTC.stake(ethers.utils.parseEther(floorPrice), '1'));
+                      await tx(writeContracts.NewFloorPools.stake(ethers.utils.parseEther(floorPrice), '1'));
                       setBuying(false);
                     }}
                   >
@@ -704,7 +704,7 @@ function App(props) {
           </Route>
           <Route path="/contracts">
             <Contract
-              name="StakingGTC"
+              name="NewFloorPools"
               signer={userSigner}
               provider={localProvider}
               address={address}

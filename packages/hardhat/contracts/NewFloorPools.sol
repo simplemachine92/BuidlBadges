@@ -9,11 +9,12 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 
-/// @title A title that should describe the contract/interface
+/// @title Floor Raising Pools!
 /// @author jaxcoder && nowonder
-/// @notice Creates Donation Pools, purchases NFTs @ new floor, and burns them 🔥
-/// @dev Explain to a developer any extra details
-contract StakingGTC is Ownable, ReentrancyGuard {
+/// @notice Creates Donation Pools, purchases NFTs @ new floor, and burns? them 🔥
+/// @dev Explain to a developer any extra detailss
+
+contract NewFloorPools is Ownable, ReentrancyGuard {
   using SafeMath for uint256;
   using Counters for Counters.Counter;
 
@@ -23,7 +24,6 @@ contract StakingGTC is Ownable, ReentrancyGuard {
   
     // vars
     Counters.Counter private _poolIds;
-    bool public _isClosed;
 
   // structs
   struct PoolInfo {
@@ -39,7 +39,6 @@ contract StakingGTC is Ownable, ReentrancyGuard {
   // mappings
   mapping(uint256 => PoolInfo) public poolInfo;
   mapping(address => mapping(uint256 => PoolInfo)) public balanceInfo;
-  mapping(address => mapping(uint256 => PoolInfo)) public floorInfo;
   //mapping(address => mapping(uint => PoolInfo)) public floorInfo;
   //mapping(address => uint) public floor;
   mapping(address => uint256) public userDonation;
@@ -72,9 +71,19 @@ contract StakingGTC is Ownable, ReentrancyGuard {
 
   }
 
+    // Maybe we allow users to lock their tokens, to determine ETH distribution instead of a total supply, we
+    // have a user supply
+
+  /* function locknft(uint256 poolId, uint256 _id, uint256 price) {
+    require(block.timestamp < deadline, "locking closed");
+    PoolInfo storage pool = poolInfo[poolId];
+    token = IERC721(pool.asset);
+    
+  } */
+
     // donate function accepts ETH for pool, raises floor price
   function donate(uint256 poolId) public payable {
-    require(block.timestamp < deadline, "Donating closed");
+    require(block.timestamp < deadline, "donating closed");
     require(msg.value > 0, "value must be more than 0");
 
     PoolInfo storage pool = poolInfo[poolId];
@@ -95,8 +104,9 @@ contract StakingGTC is Ownable, ReentrancyGuard {
 
         (bool success, ) = msg.sender.call{value: currentFloor}("");
         require(success);
-        // burn the nft's approval required
-        token.burn(_id);
+
+        // transfer nft to this contract, approve needed ofc
+        token.transferFrom(msg.sender, address(this), _id);
     }
 
     function poolFloor(uint256 poolId) public view returns(uint256) {
@@ -111,9 +121,3 @@ contract StakingGTC is Ownable, ReentrancyGuard {
   }
   
 }
-
-  // initialize pool
-  //function initializePool() public {
-  //}
-
-  //get pool nft floor

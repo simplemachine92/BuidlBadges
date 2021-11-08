@@ -25,6 +25,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   NFT = await deploy("SimpleNFT", {
     from: deployer,
+                      //replace 2nd arg with your address or front-end address
     args: ['bobsson', '0xb010ca9Be09C382A9f31b79493bb232bCC319f01', '200'],
     log: true,
     });
@@ -33,13 +34,13 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   // deploy Staking Contract ~ any network
   if (chainId !== "1") {
-  await deploy("StakingGTC", {
+  await deploy("NewFloorPools", {
     from: deployer,
     args: [NFT.address, '360'],
     log: true,
   });
 } else {
-  await deploy("StakingGTC", {
+  await deploy("NewFloorPools", {
     from: deployer,
     args: ['0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F'],
     log: true,
@@ -66,4 +67,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   }
 }; */
 
-module.exports.tags = ["StakingGTC", "SimpleNFT"];
+module.exports.tags = ["NewFloorPools", "SimpleNFT"];
