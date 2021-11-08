@@ -712,14 +712,6 @@ function App(props) {
               contractConfig={contractConfig}
             />
             <Contract
-              name="GTC"
-              signer={userSigner}
-              provider={localProvider}
-              address={address}
-              blockExplorer={blockExplorer}
-              contractConfig={contractConfig}
-            />
-            <Contract
               name="SimpleNFT"
               signer={userSigner}
               provider={localProvider}

@@ -8,7 +8,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const chainId = await getChainId();
 
   //! prod GTC address
-  let GTC = { address: "0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F" };
+  /* let GTC = { address: "0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F" };
 
   // deploy mock token contract ~ if not on mainnet
   if (chainId !== "1") {
@@ -21,7 +21,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     });
   }
 
-  const GTC2 = await ethers.getContract("GTC");
+  const GTC2 = await ethers.getContract("GTC"); */
 
   NFT = await deploy("SimpleNFT", {
     from: deployer,
@@ -35,7 +35,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   if (chainId !== "1") {
   await deploy("StakingGTC", {
     from: deployer,
-    args: [GTC2.address, SimpleNFT.address],
+    args: [NFT.address, '360'],
     log: true,
   });
 } else {
@@ -44,9 +44,9 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     args: ['0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F'],
     log: true,
   });
-}
+}}
 
-  // Getting a previously deployed contract
+/*   // Getting a previously deployed contract
   const StakeGTCContract = await ethers.getContract("StakingGTC", deployer);
 
   // log the GTC and StreamFactory addresses
@@ -64,6 +64,6 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
       constructorArguments: [GTC.address],
     });
   }
-};
+}; */
 
-module.exports.tags = ["GTC", "StakingGTC"];
+module.exports.tags = ["StakingGTC", "SimpleNFT"];
