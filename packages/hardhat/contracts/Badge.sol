@@ -4,14 +4,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 //import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 //import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 //import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract SimpleNFT is ERC721URIStorage {
+contract NonTransferrableERC721Token is ERC721URIStorage {
     uint256 public tokenCounter = 1;
     string public tokenURI;
 
@@ -32,7 +31,7 @@ contract SimpleNFT is ERC721URIStorage {
         return tokenCounter;
     }
     
-    //Block Transfers
+    //Make sure we can't transfer
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         virtual
@@ -42,25 +41,25 @@ contract SimpleNFT is ERC721URIStorage {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-        //Block Approvals
-     function _approve(address to, uint256 tokenId)
+    //Ensure no listing on Opensea by blocking Approve
+    /* function _beforeApprove(address to, uint256 tokenId)
         internal
         virtual
-        override(ERC721)
+        override(ERC721URIStorage, ERC721)
     {
-        require(to == address(0) || tokenId == 0, "NonApprovableERC721Token: non-approvable");
-        super._approve(to, tokenId);
+        require(from == address(0) || to == address(0), "NonTransferrableERC721Token: non transferrable");
+        super._beforeTokenTransfer(from, to, tokenId);
     }
 
-        //Block ApproveAll
-     function setApprovalForAll(address operator, bool _approved)
-        public
+    //setApprovalForAll(to, approved)
+    function _beforeApproveAll(address to, bool approved)
+        internal
         virtual
-        override(ERC721)
+        override(ERC721URIStorage, ERC721)
     {
-        require(operator == address(0) || _approved == false, "NonApprovableERC721Token: non-approvable");
-        super.setApprovalForAll(operator, _approved);
-    }
+        require(from == address(0) || to == address(0), "NonTransferrableERC721Token: non transferrable");
+        super._beforeTokenTransfer(from, to, tokenId);
+    } */
 
     /* function mint(address to) public {
         require(

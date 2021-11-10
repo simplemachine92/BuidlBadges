@@ -36,12 +36,18 @@ contract NewFloorPools is Ownable, ReentrancyGuard {
     uint floor;
   }
 
+  struct Token {
+  uint id;
+  address owner;
+}
+
   // mappings
   mapping(uint256 => PoolInfo) public poolInfo;
   mapping(address => mapping(uint256 => PoolInfo)) public balanceInfo;
   //mapping(address => mapping(uint => PoolInfo)) public floorInfo;
   //mapping(address => uint) public floor;
   mapping(address => uint256) public userDonation;
+  //mapping(address => mapping(uint256 => PoolInfo)) public userToken;
 
 
   // events
@@ -65,7 +71,8 @@ contract NewFloorPools is Ownable, ReentrancyGuard {
     pool.balance = pool.balance + msg.value;
     pool.poolid = id;
     pool.supply = _totalSupply;
-    pool.floor = pool.balance / _totalSupply; 
+    pool.floor = pool.balance / _totalSupply;
+    //pool.tokens = type[];
 
     emit PoolCreated(id, _nft, msg.value, block.timestamp);
 
@@ -74,12 +81,17 @@ contract NewFloorPools is Ownable, ReentrancyGuard {
     // Maybe we allow users to lock their tokens, to determine ETH distribution instead of a total supply, we
     // have a user supply
 
-  /* function locknft(uint256 poolId, uint256 _id, uint256 price) {
+   function locknft(uint256 poolId, uint256 _id, uint256 price) public {
     require(block.timestamp < deadline, "locking closed");
     PoolInfo storage pool = poolInfo[poolId];
     token = IERC721(pool.asset);
+
+    token.transferFrom(msg.sender, address(this), _id);
+
+
+    //userToken[msg.sender][poolId].tokens = userToken[msg.sender][poolId].balance.add(msg.value);
     
-  } */
+  } 
 
     // donate function accepts ETH for pool, raises floor price
   function donate(uint256 poolId) public payable {
