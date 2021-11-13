@@ -23,17 +23,17 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   const GTC2 = await ethers.getContract("GTC"); */
 
-  NFT = await deploy("SimpleNFT", {
+  NFT = await deploy("BuidlBagde_1", {
     from: deployer,
                       //replace 2nd arg with your address or front-end address
-    args: ['bobsson'],
+    args: ['https://forgottenbots.mypinata.cloud/ipfs/QmaD6VZJC6PktSAsRDzQH5xiLHqUNamkoQSKcYQCZc9Uh3/Abrupt_Memory.json'],
     log: true,
     });
 
-    const SimpleNFT = await ethers.getContract("SimpleNFT");
+    const BuidlBagde_1 = await ethers.getContract("BuidlBagde_1");
 
   // deploy Staking Contract ~ any network
-  if (chainId !== "1") {
+  /* if (chainId !== "1") {
   await deploy("NewFloorPools", {
     from: deployer,
     args: [NFT.address, '360'],
@@ -45,7 +45,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     args: ['0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F'],
     log: true,
   });
-}}
+}} */
 
 /*   // Getting a previously deployed contract
   const StakeGTCContract = await ethers.getContract("StakingGTC", deployer);
@@ -66,5 +66,5 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     });
   }
 }; */
-
-module.exports.tags = ["NewFloorPools", "SimpleNFT"];
+}
+module.exports.tags = ["BuidlBagde_1"];

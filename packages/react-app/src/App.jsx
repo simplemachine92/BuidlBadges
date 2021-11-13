@@ -712,7 +712,7 @@ function App(props) {
               contractConfig={contractConfig}
             />
             <Contract
-              name="SimpleNFT"
+              name="BuidlBagde_1"
               signer={userSigner}
               provider={localProvider}
               address={address}

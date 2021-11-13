@@ -2,27 +2,31 @@ pragma solidity ^0.8.0;
 // // SPDX-License-Identifier: MIT
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-//import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-//import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-//import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract SimpleNFT is ERC721URIStorage {
+contract BuidlBagde_1 is ERC721URIStorage, Ownable {
+
+    // limit delegations
+    uint256 public constant D_LIMIT = 1;
+
     uint256 public tokenCounter = 1;
     string public tokenURI;
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    mapping(address => uint256) public delegateLimit;
+
     constructor(string memory _baseURI) ERC721 ("BuidlGuidl Badge 1", "BG1") {
         tokenURI = _baseURI;
+        transferOwnership(0x1c3FC6b664DB646Cbf91211c23b545b518F5919C);
     }
 
-    function mint(address recipient) public returns (uint256) {
+    function mint(address recipient) public onlyOwner returns (uint256) {
         _mint(recipient, tokenCounter);
 
         _setTokenURI(tokenCounter, tokenURI);
@@ -30,6 +34,29 @@ contract SimpleNFT is ERC721URIStorage {
         tokenCounter = tokenCounter + 1;
 
         return tokenCounter;
+    }
+
+    function delegate(address to, uint256 tokenId) public returns (uint256) {
+        // must hold the tokenId to delegate, must not have delegated
+        require(msg.sender == ownerOf(tokenId),
+            "you don't own that token."
+        );
+        require(
+            delegateLimit[msg.sender] < D_LIMIT,
+            "no delegation chains, anon."
+        );
+
+        _mint(to, tokenCounter);
+
+        _setTokenURI(tokenCounter, tokenURI);
+
+        tokenCounter = tokenCounter + 1;
+
+            // neither address involved can delegate again
+         delegateLimit[msg.sender] = delegateLimit[msg.sender] + 1;
+         delegateLimit[to] = delegateLimit[to] + 1;
+
+    return tokenCounter;
     }
     
     //Block Transfers
@@ -48,8 +75,7 @@ contract SimpleNFT is ERC721URIStorage {
         virtual
         override(ERC721)
     {
-        require(to == address(0) || tokenId == 0, "NonApprovableERC721Token: non-approvable");
-        super._approve(to, tokenId);
+        revert("NonApprovableERC721Token: non-approvable");
     }
 
         //Block ApproveAll
@@ -58,21 +84,6 @@ contract SimpleNFT is ERC721URIStorage {
         virtual
         override(ERC721)
     {
-        require(operator == address(0) || _approved == false, "NonApprovableERC721Token: non-approvable");
-        super.setApprovalForAll(operator, _approved);
+        revert("NonApprovableERC721Token: non-approvable");
     }
-
-    /* function mint(address to) public {
-        require(
-            hasRole(MINTER_ROLE, msg.sender),
-            "NonTransferrableERC721Token: account does not have minter role"
-        );
-        _tokenIds.increment();
-
-        uint256 newTokenId = _tokenIds.current();
-        _mint(to, newTokenId);
-        _setTokenURI(newTokenId, Strings.fromUint256(newTokenId));
-    } */
-
-    
 }
