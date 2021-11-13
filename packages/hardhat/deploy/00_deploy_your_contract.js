@@ -26,7 +26,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   NFT = await deploy("BuidlBagde_1", {
     from: deployer,
                       //replace 2nd arg with your address or front-end address
-    args: ['https://forgottenbots.mypinata.cloud/ipfs/QmaD6VZJC6PktSAsRDzQH5xiLHqUNamkoQSKcYQCZc9Uh3/Abrupt_Memory.json'],
+    args: ['https://forgottenbots.mypinata.cloud/ipfs/QmZKUPeCSZSiz6MNVA6qDGb5yo9LDG3dQMVojK8HLbynu1'],
     log: true,
     });
 
@@ -47,24 +47,15 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   });
 }} */
 
-/*   // Getting a previously deployed contract
-  const StakeGTCContract = await ethers.getContract("StakingGTC", deployer);
-
-  // log the GTC and StreamFactory addresses
-  console.log({
-    GTC: GTC.address,
-    streamFactory: StakeGTCContract.address,
-  });
 
   // make sure were not on the local chain...
-  if (chainId !== "31337") {
+  /* if (chainId !== "31337") {
     // verigy the staking contract
-    await run("verify:verify", {
-      address: StakeGTCContract.address,
-      contract: "contracts/StakingGTC.sol:StakingGTC",
-      constructorArguments: [GTC.address],
+    await run("etherscan-verify", {
+      address: BuidlBagde_1.address,
+      contract: "contracts/BuidlBagde_1.sol:BuidlBagde_1",
+      constructorArguments: ['https://forgottenbots.mypinata.cloud/ipfs/QmZKUPeCSZSiz6MNVA6qDGb5yo9LDG3dQMVojK8HLbynu1'],
     });
   }
-}; */
-}
+};  */}
 module.exports.tags = ["BuidlBagde_1"];

@@ -19,11 +19,12 @@ contract BuidlBagde_1 is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    //mapping of addresses
     mapping(address => uint256) public delegateLimit;
 
     constructor(string memory _baseURI) ERC721 ("BuidlGuidl Badge 1", "BG1") {
         tokenURI = _baseURI;
-        transferOwnership(0x1c3FC6b664DB646Cbf91211c23b545b518F5919C);
+        transferOwnership(0xb010ca9Be09C382A9f31b79493bb232bCC319f01);
     }
 
     function mint(address recipient) public onlyOwner returns (uint256) {
