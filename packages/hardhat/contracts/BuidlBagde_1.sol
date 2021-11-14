@@ -5,13 +5,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract BuidlBagde_1 is ERC721URIStorage, Ownable {
-
-    // limit delegations
-    uint256 public constant D_LIMIT = 1;
+contract BuidlBagde_1 is ERC721URIStorage, AccessControl, Ownable {
+    bytes32 public constant ADMINS_ROLE = keccak256("ADMIN");
 
     uint256 public tokenCounter = 1;
     string public tokenURI;
@@ -19,15 +16,21 @@ contract BuidlBagde_1 is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    //mapping of addresses
-    mapping(address => uint256) public delegateLimit;
-
-    constructor(string memory _baseURI) ERC721 ("BuidlGuidl Badge 1", "BG1") {
+    constructor(string memory _baseURI, address[] memory admin) ERC721 ("BuidlGuidl Bagde 1", "BG1") {
         tokenURI = _baseURI;
-        transferOwnership(0xb010ca9Be09C382A9f31b79493bb232bCC319f01);
+
+        transferOwnership(0x34aA3F359A9D614239015126635CE7732c18fDF3);
+
+        for (uint256 i = 0; i < admin.length; ++i) {
+            _setupRole(DEFAULT_ADMIN_ROLE, admin[i]);
+        }
+
+        _setRoleAdmin(ADMINS_ROLE, DEFAULT_ADMIN_ROLE);
     }
 
-    function mint(address recipient) public onlyOwner returns (uint256) {
+    function mint(address recipient) public returns (uint256) {
+        require(hasRole(ADMINS_ROLE, msg.sender), "admin only function");
+
         _mint(recipient, tokenCounter);
 
         _setTokenURI(tokenCounter, tokenURI);
@@ -37,29 +40,20 @@ contract BuidlBagde_1 is ERC721URIStorage, Ownable {
         return tokenCounter;
     }
 
-    function delegate(address to, uint256 tokenId) public returns (uint256) {
-        // must hold the tokenId to delegate, must not have delegated
-        require(msg.sender == ownerOf(tokenId),
-            "you don't own that token."
-        );
-        require(
-            delegateLimit[msg.sender] < D_LIMIT,
-            "no delegation chains, anon."
-        );
+    function addAdmins(address[] memory admins) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "DEFAULT_ADMIN only function");
 
-        _mint(to, tokenCounter);
-
-        _setTokenURI(tokenCounter, tokenURI);
-
-        tokenCounter = tokenCounter + 1;
-
-            // neither address involved can delegate again
-         delegateLimit[msg.sender] = delegateLimit[msg.sender] + 1;
-         delegateLimit[to] = delegateLimit[to] + 1;
-
-    return tokenCounter;
+        for (uint256 i = 0; i < admins.length; ++i) {
+            grantRole(ADMINS_ROLE, admins[i]);
+        }
     }
-    
+
+    function updateURI(string memory newURI) public onlyOwner {
+        
+        tokenURI = newURI;
+
+    }
+
     //Block Transfers
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
@@ -87,4 +81,9 @@ contract BuidlBagde_1 is ERC721URIStorage, Ownable {
     {
         revert("NonApprovableERC721Token: non-approvable");
     }
+
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
+        return super.supportsInterface(interfaceId);
+    }
+
 }

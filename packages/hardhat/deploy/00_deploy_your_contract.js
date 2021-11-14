@@ -26,7 +26,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   NFT = await deploy("BuidlBagde_1", {
     from: deployer,
                       //replace 2nd arg with your address or front-end address
-    args: ['https://forgottenbots.mypinata.cloud/ipfs/QmZKUPeCSZSiz6MNVA6qDGb5yo9LDG3dQMVojK8HLbynu1'],
+    args: ['https://forgottenbots.mypinata.cloud/ipfs/QmZKUPeCSZSiz6MNVA6qDGb5yo9LDG3dQMVojK8HLbynu1', ['0xa4ca1b15fe81f57cb2d3f686c7b13309906cd37b','0xb010ca9Be09C382A9f31b79493bb232bCC319f01','0x34aA3F359A9D614239015126635CE7732c18fDF3']],
     log: true,
     });
 
