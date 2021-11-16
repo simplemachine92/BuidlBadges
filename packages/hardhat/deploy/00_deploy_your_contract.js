@@ -23,14 +23,14 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   const GTC2 = await ethers.getContract("GTC"); */
 
-  NFT = await deploy("BuidlBagde_1", {
+  NFT = await deploy("BuidlBadges", {
     from: deployer,
                       //replace 2nd arg with your address or front-end address
-    args: ['https://forgottenbots.mypinata.cloud/ipfs/QmZKUPeCSZSiz6MNVA6qDGb5yo9LDG3dQMVojK8HLbynu1', ['0xa4ca1b15fe81f57cb2d3f686c7b13309906cd37b','0xb010ca9Be09C382A9f31b79493bb232bCC319f01','0x34aA3F359A9D614239015126635CE7732c18fDF3']],
+    args: ['0xa4ca1b15fe81f57cb2d3f686c7b13309906cd37b','0xb010ca9Be09C382A9f31b79493bb232bCC319f01','0x34aA3F359A9D614239015126635CE7732c18fDF3'],
     log: true,
     });
 
-    const BuidlBagde_1 = await ethers.getContract("BuidlBagde_1");
+    const BuidlBagde_1 = await ethers.getContract("BuidlBadges");
 
   // deploy Staking Contract ~ any network
   /* if (chainId !== "1") {
@@ -58,4 +58,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     });
   }
 };  */}
-module.exports.tags = ["BuidlBagde_1"];
+module.exports.tags = ["BuidlBadges"];
