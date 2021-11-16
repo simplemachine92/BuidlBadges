@@ -712,7 +712,7 @@ function App(props) {
               contractConfig={contractConfig}
             />
             <Contract
-              name="BuidlBagde_1"
+              name="BuidlBadges"
               signer={userSigner}
               provider={localProvider}
               address={address}

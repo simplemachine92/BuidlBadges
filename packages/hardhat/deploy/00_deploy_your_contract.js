@@ -26,7 +26,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   NFT = await deploy("BuidlBadges", {
     from: deployer,
                       //replace 2nd arg with your address or front-end address
-    args: ['0xa4ca1b15fe81f57cb2d3f686c7b13309906cd37b','0xb010ca9Be09C382A9f31b79493bb232bCC319f01','0x34aA3F359A9D614239015126635CE7732c18fDF3'],
+    args: [['0xa4ca1b15fe81f57cb2d3f686c7b13309906cd37b','0xb010ca9Be09C382A9f31b79493bb232bCC319f01','0x34aA3F359A9D614239015126635CE7732c18fDF3']],
     log: true,
     });
 

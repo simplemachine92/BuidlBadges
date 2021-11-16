@@ -5,21 +5,27 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract 1155 is ERC1155, Ownable, AccessControl {
+contract BuidlBadges is ERC1155, Ownable, AccessControl {
     bytes32 public constant ADMINS_ROLE = keccak256("ADMIN");
 
-    uint256 public constant GOLD = 0;
-    uint256 public constant SILVER = 1;
-    uint256 public constant THORS_HAMMER = 2;
-    uint256 public constant SWORD = 3;
-    uint256 public constant SHIELD = 4;
+    uint256 public constant SIMPLE_NFT = 0;
+    uint256 public constant STAKING = 1;
+    uint256 public constant VENDOR = 2;
+    uint256 public constant MULTI_SIG = 3;
+    uint256 public constant ORACLES = 4;
+    uint256 public constant EXCHANGE = 5;
+    uint256 public constant BUYER_MINTS = 6;
+    uint256 public constant STREAMS = 7;
+    uint256 public constant DAMAGE_DEALER = 8;
+    uint256 public constant COMMUNITY_HELPER = 9;
 
-    constructor(address[] memory admin) ERC1155("https://game.example/api/item/{id}.json") {
-        _mint(msg.sender, GOLD, 10**18, "");
-        _mint(msg.sender, SILVER, 10**27, "");
-        _mint(msg.sender, THORS_HAMMER, 1, "");
-        _mint(msg.sender, SWORD, 10**9, "");
-        _mint(msg.sender, SHIELD, 10**9, "");
+    event Minted(address recipient, uint256 tokenId);
+
+    constructor(address[] memory admin) 
+        ERC1155(
+    "https://forgottenbots.mypinata.cloud/ipfs/QmRPv9HDrmQy2NDD1Q3HNeSFv1uy3F2DRqZpMkvEaXzNEN/{id}.json"
+    ) 
+    {
 
         transferOwnership(0x34aA3F359A9D614239015126635CE7732c18fDF3);
 
@@ -29,6 +35,24 @@ contract 1155 is ERC1155, Ownable, AccessControl {
 
         _setRoleAdmin(ADMINS_ROLE, DEFAULT_ADMIN_ROLE);
         
+    }
+
+    function mint(
+        address recipient,
+        uint256 tokenId
+        ) public {
+
+        require(hasRole(ADMINS_ROLE, msg.sender), "admin only function");
+
+        _mint(msg.sender, tokenId, 1, "");
+
+            emit Minted(recipient, tokenId);
+
+    }
+
+    function reward(address recipient) public returns (uint256) {
+        require(hasRole(ADMINS_ROLE, msg.sender), "admin only function");
+        _mint(recipient, DAMAGE_DEALER, 10**9, "");
     }
 
     function addAdmins(address[] memory admins) public {
@@ -57,7 +81,10 @@ contract 1155 is ERC1155, Ownable, AccessControl {
     }
 
         //Block ApproveAll
-     function setApprovalForAll(address operator, bool _approved)
+     function setApprovalForAll(
+         address operator,
+         bool _approved
+    )
         public
         virtual
         override(ERC1155)
@@ -65,7 +92,15 @@ contract 1155 is ERC1155, Ownable, AccessControl {
         revert("NonApprovableERC1155Token: non-approvable");
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, AccessControl) returns (bool) {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) 
+    public
+    view
+    virtual
+    override(ERC1155, AccessControl)
+    returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
 
