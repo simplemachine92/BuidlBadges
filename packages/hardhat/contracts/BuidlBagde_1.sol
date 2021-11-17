@@ -16,6 +16,8 @@ contract BuidlBagde_1 is ERC721URIStorage, AccessControl, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    event Minted(address recipient, uint256 tokenCounter);
+
     constructor(string memory _baseURI, address[] memory admin) ERC721 ("BuidlGuidl Bagde 1", "BG1") {
         tokenURI = _baseURI;
 
@@ -36,6 +38,8 @@ contract BuidlBagde_1 is ERC721URIStorage, AccessControl, Ownable {
         _setTokenURI(tokenCounter, tokenURI);
 
         tokenCounter = tokenCounter + 1;
+
+            emit Minted(recipient, tokenCounter);
 
         return tokenCounter;
     }

@@ -23,7 +23,7 @@ contract BuidlBadges is ERC1155, Ownable, AccessControl {
 
     constructor(address[] memory admin) 
         ERC1155(
-    "https://forgottenbots.mypinata.cloud/ipfs/QmRPv9HDrmQy2NDD1Q3HNeSFv1uy3F2DRqZpMkvEaXzNEN/{id}.json"
+    "https://forgottenbots.mypinata.cloud/ipfs/QmZvQZiZrTm2ewQXDUw1GA5eaGv7xnpzPRtaRZznFBmpoQ/{id}.json"
     ) 
     {
 
@@ -37,6 +37,10 @@ contract BuidlBadges is ERC1155, Ownable, AccessControl {
         
     }
 
+    /**
+     * @notice Mints the badge
+     * @param tokenId identifies the badge to be minted (0-9 for now)
+     */
     function mint(
         address recipient,
         uint256 tokenId
@@ -55,6 +59,9 @@ contract BuidlBadges is ERC1155, Ownable, AccessControl {
         _mint(recipient, DAMAGE_DEALER, 10**9, "");
     }
 
+    /**
+     * @notice Allows original admins to add curators
+     */
     function addAdmins(address[] memory admins) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "DEFAULT_ADMIN only function");
 
@@ -63,7 +70,17 @@ contract BuidlBadges is ERC1155, Ownable, AccessControl {
         }
     }
 
-    //Block Transfers
+    /**
+   * @dev Contract uri
+   */
+    function uri() public view returns (string memory) {
+        return
+            "https://forgottenbots.mypinata.cloud/ipfs/QmTYr3kBhyySATmt9UEgKBPgpg7DGRFL4wef9AoSsDxNo2";
+    }
+
+    /**
+     * @notice Block badge transfers
+     */
     function _beforeTokenTransfer(
         address operator,
         address from,
@@ -80,7 +97,9 @@ contract BuidlBadges is ERC1155, Ownable, AccessControl {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 
-        //Block ApproveAll
+    /**
+     * @notice Block badge approvals, so they can't be listed on marketplaces.
+     */
      function setApprovalForAll(
          address operator,
          bool _approved
@@ -92,6 +111,9 @@ contract BuidlBadges is ERC1155, Ownable, AccessControl {
         revert("NonApprovableERC1155Token: non-approvable");
     }
 
+    /**
+     * @notice Override interface to use AccessControl
+     */
     function supportsInterface(
         bytes4 interfaceId
     ) 
